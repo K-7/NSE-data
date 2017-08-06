@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="/static/css/style.css" rel="stylesheet">
+  <script src="/static/js/jquery-3.1.0.min.js"></script>
+  <script src="/static/js/masonry.pkgd.min.js"></script>
+  <script src="/static/bootstrap/js/bootstrap.js"></script>
+  <link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet">
+  <script type="text/javascript">
+    $(document).ready(function() {
+        var $gainers_grid = $('#gainers-grid').masonry({
+          itemSelector: '.grid-item',
+          columnWidth: 250,
+          gutter: 20
+        });
+        var $losers_grid = $('#losers-grid').masonry({
+          itemSelector: '.grid-item',
+          columnWidth: 250,
+          gutter: 20
+        });
+
+        function doPoll() {
+          $.ajax({
+            type: "GET",
+            url: "/get_data",
+            dataType: "json",
+            data: {}
+          })
+          .done(function(response) {
+            console.log(response);
+            grid_view(response.gainers_data, $gainers_grid);
+            grid_view(response.losers_data, $losers_grid);
+            $losers_grid.hide();
+            $("#time").text(response.time);
+          }).always(function () {
+              setTimeout(doPoll, 100000000);
+          });
+        }
+
+        doPoll();
+
+        function grid_view(stocks, $grid) {
+          $grid.masonry().empty().masonry();
+          for(i=0;i<stocks.length;i++){
+
+              markup = '<div class="grid-item">'+
+                        '<div class="feed-item">'+
+                        '<h4 class="text-theme"><i class="fa fa-user"></i> '+stocks[i].symbol+'  ('+stocks[i].series+')'+'</h4>'+
+                        '<p class="feed-answer">LTP: '+stocks[i].ltp+'</p>'+
+                        '<p class="feed-answer">Open: '+stocks[i].openPrice+"</p>"+
+                        '<p class="feed-answer">Low: '+stocks[i].lowPrice+'</p>'+
+                        '<p class="feed-answer">% Change: '+stocks[i].netPrice+'</p>'+
+                        '<p class="feed-answer">Prev-close: '+stocks[i].previousPrice+'</p>'+
+                        '<p class="feed-answer">High: '+stocks[i].highPrice+'</p>'+
+                        '<p class="feed-answer">Traded Qty: '+stocks[i].tradedQuantity+'</p>'+
+                        '<p class="feed-answer">Traded Value(Lakhs): '+stocks[i].turnoverInLakhs+'</p>'+
+                        '</div></div>';
+              
+              var html = $(markup);
+              $grid.masonry().append( html ).masonry( 'appended', html ).masonry();
+          }
+        }
+
+        $("#gainers_btn").on("click", function() {
+          $gainers_grid.show();
+          $losers_grid.hide();
+          $(this).addClass("grp-btn-active");
+          $("#losers_btn").removeClass("grp-btn-active");
+        });
+        $("#losers_btn").on("click", function() {
+          $losers_grid.show();
+          $gainers_grid.hide();
+          $(this).addClass("grp-btn-active");
+          $("#gainers_btn").removeClass("grp-btn-active");
+        });
+    });
+  </script>
+</head>
+<body>
+  <nav class="navbar navbar-inverse bg-blue">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>                        
+        </button>
+        <a class="navbar-brand" href="#">NSE 50</a>
+      </div>
+      <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+          <li id="menu_home"><a href="#"></a></li>
+          <li id="menu_treks"><a href="#"></a></li>  
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid body-content text-center">
+    <div class="row content text-center">
+      <div class="btn-group btn-group-lg" role="group" aria-label="...">
+        <button type="button" id="gainers_btn" class="btn btn-default grp-btn-active">Gainers</button>
+        <button type="button" id="losers_btn" class="btn btn-default">Losers</button>
+      </div>
+      <h3 id="time"></h3>
+    </div>
+    <br><br><br>
+    <div class="row content">
+      <div class="col-md-1"></div>
+      <div class="col-md-10"><div id="gainers-grid"></div></div>
+      <div class="col-md-1"></div>
+    </div>
+    <div class="row content">
+      <div class="col-md-1"></div>
+      <div class="col-md-10"><div id="losers-grid"></div></div>
+      <div class="col-md-1"></div>
+    </div>
+  </div>
+
+</body>
+</html>

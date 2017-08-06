@@ -1,0 +1,11 @@
+*.pyc
+**/*.pyc
+.DS_Store
+**/.DS_Store
+**/.pydevproject
+.pydevproject
+env/
+.project
+*.log
+*.pid
+celerybeat-schedule.db
