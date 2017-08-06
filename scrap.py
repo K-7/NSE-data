@@ -10,7 +10,7 @@ from datetime import timedelta
 CELERYBEAT_SCHEDULE = {
     "poll_SO": {
         "task": "scrap.nse_data",
-        "schedule": timedelta(seconds=30),
+        "schedule": timedelta(seconds=300),
         "args": []
     }
 }
@@ -37,7 +37,4 @@ def nse_data():
 	store.set("gainers",gainers_req.content)
 	losers_req = requests.get(losers_url)
 	store.set("losers",losers_req.content)
-	print store.get("gainers")
-	print "=================="
-	print store.get("losers")
 	

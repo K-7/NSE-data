@@ -44,5 +44,5 @@ if __name__ == '__main__':
         }
     }
 
-	# Daemonizer(cherrypy.engine).subscribe()
+	Daemonizer(cherrypy.engine).subscribe()
 	cherrypy.quickstart(LandingPage(), '/', conf)
