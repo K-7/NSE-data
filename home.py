@@ -1,3 +1,5 @@
+"""Cherrypy configuration and views for templates are present in this module.
+"""
 import random
 import string
 import os, os.path
